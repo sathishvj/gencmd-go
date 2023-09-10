@@ -84,20 +84,6 @@ Written by Sathish VJ`)
 }
 
 func parseFlags() {
-	// capture command line arguments os as string for os, n as int for number, t as float32 for temperature, v as bool for verbose, l as bool for lines
-
-	/*
-		osArg := flag.String("o", args.os, "Operating system. Example: unix, linux, windows")
-		numArg := flag.Int("n", args.num, "Number of results to generate. Max 10. Default is 4.")
-		tempArg := flag.Float64("t", float64(args.temp), "Temperature [0.0-1.0]. Default is 0.9.")
-		verboseArg := flag.Bool("v", args.verbose, "Verbose. Default off.")
-		linesArg := flag.Bool("l", args.lines, "Show line numbers. Default off.")
-		helpArg := flag.Bool("h", args.help, "Show usage.")
-		cmdArg := flag.String("c", args.cmd, "Command/Programme to use. Example: grep, ffmpeg, gcloud, curl. Default is empty.")
-		yearArg := flag.Int("y", args.year, "Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.")
-		versionArg := flag.Bool("version", false, "Show version of this build.")
-	*/
-
 	flag.StringVar(&args.os, "o", args.os, "Operating system. Example: unix, linux, windows")
 	flag.IntVar(&args.num, "n", args.num, "Number of results to generate. Max 10. Default is 4.")
 	flag.Float64Var(&args.temp, "t", args.temp, "Temperature [0.0-1.0]. Default is 0.9.")
@@ -109,37 +95,6 @@ func parseFlags() {
 	flag.BoolVar(&args.version, "version", false, "Show version of this build.")
 
 	flag.Parse()
-
-	/*
-		// these cannot be null since we are giving defaults, right? Check later
-		if osArg != nil {
-			args.os = *osArg
-		}
-		if numArg != nil {
-			args.num = *numArg
-		}
-		if tempArg != nil {
-			args.temp = float32(*tempArg)
-		}
-		if verboseArg != nil {
-			args.verbose = *verboseArg
-		}
-		if linesArg != nil {
-			args.lines = *linesArg
-		}
-		if helpArg != nil {
-			args.help = *helpArg
-		}
-		if cmdArg != nil {
-			args.cmd = *cmdArg
-		}
-		if yearArg != nil {
-			args.year = *yearArg
-		}
-		if versionArg != nil {
-			args.version = *versionArg
-		}
-	*/
 
 	if args.num < 1 {
 		args.num = 1
