@@ -1,5 +1,7 @@
 # gencmd
-Generate cmd line arguments from the cmd line itself. 
+Generate cmd line arguments from the terminal itself. 
+
+You're on your terminal and you're trying to recall the right command line arguments. What's your workflow then? Shift to your browser, run a search, click through multiple links, read through multiple pages, and then finally find the right command line arguments? That's distracting. With `gencmd` your workflow continues in the command line itself.
 
 Uses Google's PaLM API. 
 
@@ -43,7 +45,7 @@ git rm -r --cached <directory>
 git rm --cached -r <directory>
 ```
 
-### Required! PaLM API key
+### Requires PaLM API key
 This works with Google's PaLM API. You need to have an API key for it to work. 
 If you have access to MakerSuite, you can get it from there: [MakerSuite - Get API key](https://makersuite.google.com/app/apikey). 
 As of now, access is limited by Google. So you might have to put yourself on the waitlist.
@@ -76,10 +78,10 @@ chmod +x gencmd
 ```
 
 #### 3. Export the API key.
-You need to get this API key from MakerSuite. 
 ```
 export GENCMD_API_KEY=<your api key>
 ```
+You need to get this API key from [MakerSuite - Get API key](https://makersuite.google.com/app/apikey), if you have access.
 
 #### 4. Run it
 ```
@@ -106,7 +108,6 @@ export GENCMD_API_KEY=<your api key>
 
 ### Warning!
 Google's policies say they can use your data. So don't use this with sensitive data.
-
 
 ## License
 MIT License. 
