@@ -9,6 +9,11 @@
 *.so
 *.dylib
 
+tmp
+gencmd-go
+gencmd
+main
+
 # Test binary, built with `go test -c`
 *.test
 
@@ -21,3 +26,5 @@
 # Go workspace file
 go.work
 
+# ideaj
+.idea

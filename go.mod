@@ -1,1 +1,1 @@
-module gencmd-go
+module github.com/sathishvj/gencmd-go
