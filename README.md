@@ -72,23 +72,21 @@ Available builds right now are:
  - windows-amd64/gencmd.exe
  - windows-arm644/gencmd.exe
 
-#### 2. Make the binary executable
-```
-chmod +x gencmd
-```
 
-#### 3. Export the API key.
+#### 2. Export the API key.
 ```
 export GENCMD_API_KEY=<your api key>
 ```
 You need to get this API key from [MakerSuite - Get API key](https://makersuite.google.com/app/apikey), if you have access.
 
-#### 4. Run it
+#### 3. Run a basic command to test it out.
 ```
-./gencmd -h
+./gencmd -o unix -c grep find txt files that contain the text hello
 ```
 
-#### 5. More Permanent Options
+You need to get this API key from [MakerSuite - Get API key](https://makersuite.google.com/app/apikey), if you have access.
+
+#### 4. More Permanent Options
  - You can add the binary to your path.
  - You can add the export command for the API key to your .bashrc or .zshrc or .profile file.
 
