@@ -1,9 +1,7 @@
 # gencmd
 Generate cmd line arguments from the cmd line itself. 
-Uses Google's PaLM API. 
 
-### Warning! 
-Google's policies say they can use your data. So don't use this with sensitive data.
+Uses Google's PaLM API. 
 
 ### Examples
 These are generated. So you might see different results.
@@ -45,15 +43,17 @@ git rm -r --cached <directory>
 git rm --cached -r <directory>
 ```
 
-## Required! PaLM API key
+### Required! PaLM API key
 This works with Google's PaLM API. You need to have an API key for it to work. 
-If you have access to MakerSuite, you can get it from there: [MakerSuite - Get API key](https://makersuite.google.com/app/apikey)
+If you have access to MakerSuite, you can get it from there: [MakerSuite - Get API key](https://makersuite.google.com/app/apikey). 
+As of now, access is limited by Google. So you might have to put yourself on the waitlist.
 
-## Installation
-If you know Go, you can install it from `github.com/sathishvj/gencmd-go`.
+### Installation
+If you know Go, you can download the source code or install it from `github.com/sathishvj/gencmd-go`.
 
-Alternatively, here are the steps:
-1. Download the binary for you OS and architecture from the releases directory: 
+Alternatively, here are the steps for unix based systems (Mac, Linux). The steps for Windows should be similar, but I haven't tested it.
+
+#### 1. Download the binary for you OS and architecture from the releases directory: 
 
 For example, if you are on Mac with Apple Silicon, then you can do:
 ```
@@ -69,3 +69,45 @@ Available builds right now are:
  - linux-arm644/gencmd
  - windows-amd64/gencmd.exe
  - windows-arm644/gencmd.exe
+
+#### 2. Make the binary executable
+```
+chmod +x gencmd
+```
+
+#### 3. Export the API key.
+You need to get this API key from MakerSuite. 
+```
+export GENCMD_API_KEY=<your api key>
+```
+
+#### 4. Run it
+```
+./gencmd -h
+```
+
+#### 5. More Permanent Options
+ - You can add the binary to your path.
+ - You can add the export command for the API key to your .bashrc or .zshrc or .profile file.
+
+### Options
+```
+ -c Command/Programme to use. Example: grep, ffmpeg, gcloud, curl. Default is empty.
+ -l	Show line numbers. Default off.
+ -n Number of results to generate. Max 10. Default is 4. (default 4)
+ -o Operating system. Example: unix, linux, windows (default "unix")
+ -t Temperature [0.0-1.0]. Default is 0.9. (default 0.9)
+ -y Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.
+ 
+ -h	Show usage.
+ -v	Verbose. Default off.
+ -version Show version of this build.
+```
+
+### Warning!
+Google's policies say they can use your data. So don't use this with sensitive data.
+
+
+## License
+MIT License. 
+
