@@ -75,7 +75,7 @@ func showExamples() {
 	// print usage
 	fmt.Println(`
 Examples:
-	gencmd -n 5 -t 0.9 -v convert the first 10 seconds of an mp4 video into a gif
+	gencmd -n 5 -t 0.9 convert the first 10 seconds of an mp4 video into a gif
 	gencmd -c grep find files that contain the text html
 	gencmd -o windows find files that has extension pdf
 	gencmd -c git recursively remove a directory from git but not from local
