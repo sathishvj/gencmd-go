@@ -199,7 +199,7 @@ func makeRequestString(key string, args Args, user_prompt string) Request {
 		prompt_context = strings.ReplaceAll(prompt_context, "${YEAR}", "")
 	}
 	prompt_context += user_prompt
-	fmt.Println("Full prompt context: ", prompt_context)
+	//fmt.Println("Full prompt context: ", prompt_context)
 
 	r := Request{
 		Temperature:     args.temp,
@@ -326,7 +326,7 @@ func main() {
 	resp := makeHTTPRequest(url, reqData)
 	verbose(fmt.Sprintf("%v", resp))
 
-	fmt.Println("\nThese suggestions are generated. They might not be accurate. If you are performing any file/folder/data destructive tasks, please back up your original data before trying it out.")
+	fmt.Println("\nThese suggestions are generated. They might not be accurate. If you are performing any file/folder/data destructive tasks, please back up your original data before trying it out.\n")
 	fmt.Println("Suggestions:")
 	for i, candidate := range resp.Candidates {
 		s := cleanCmd(candidate.Output)
