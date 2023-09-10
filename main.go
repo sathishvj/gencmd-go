@@ -13,9 +13,11 @@ import (
 	"strings"
 )
 
+var Version string = "to be set in ld flags"
+
 type Request struct {
 	Prompt          PromptType `json:"prompt"`
-	Temperature     float32    `json:"temperature"`
+	Temperature     float64    `json:"temperature"`
 	TopK            int        `json:"top_k"`
 	TopP            float32    `json:"top_p"`
 	CandidateCount  int        `json:"candidate_count"`
@@ -48,12 +50,13 @@ type Candidate struct {
 type Args struct {
 	os      string
 	num     int
-	temp    float32
+	temp    float64
 	verbose bool
 	lines   bool
 	help    bool
 	cmd     string
 	year    int
+	version bool
 }
 
 var args = Args{
@@ -65,6 +68,7 @@ var args = Args{
 	help:    false,
 	cmd:     "",
 	year:    0,
+	version: false,
 }
 
 func showExamples() {
@@ -82,41 +86,60 @@ Written by Sathish VJ`)
 func parseFlags() {
 	// capture command line arguments os as string for os, n as int for number, t as float32 for temperature, v as bool for verbose, l as bool for lines
 
-	osArg := flag.String("o", args.os, "Operating system. Example: unix, linux, windows")
-	numArg := flag.Int("n", args.num, "Number of results to generate. Max 10. Default is 4.")
-	tempArg := flag.Float64("t", float64(args.temp), "Temperature [0.0-1.0]. Default is 0.9.")
-	verboseArg := flag.Bool("v", args.verbose, "Verbose. Default off.")
-	linesArg := flag.Bool("l", args.lines, "Show line numbers. Default off.")
-	helpArg := flag.Bool("h", args.help, "Show usage.")
-	cmdArg := flag.String("c", args.cmd, "Command/Programme to use. Example: grep, ffmpeg, gcloud, curl. Default is empty.")
-	yearArg := flag.Int("y", args.year, "Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.")
+	/*
+		osArg := flag.String("o", args.os, "Operating system. Example: unix, linux, windows")
+		numArg := flag.Int("n", args.num, "Number of results to generate. Max 10. Default is 4.")
+		tempArg := flag.Float64("t", float64(args.temp), "Temperature [0.0-1.0]. Default is 0.9.")
+		verboseArg := flag.Bool("v", args.verbose, "Verbose. Default off.")
+		linesArg := flag.Bool("l", args.lines, "Show line numbers. Default off.")
+		helpArg := flag.Bool("h", args.help, "Show usage.")
+		cmdArg := flag.String("c", args.cmd, "Command/Programme to use. Example: grep, ffmpeg, gcloud, curl. Default is empty.")
+		yearArg := flag.Int("y", args.year, "Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.")
+		versionArg := flag.Bool("version", false, "Show version of this build.")
+	*/
+
+	flag.StringVar(&args.os, "o", args.os, "Operating system. Example: unix, linux, windows")
+	flag.IntVar(&args.num, "n", args.num, "Number of results to generate. Max 10. Default is 4.")
+	flag.Float64Var(&args.temp, "t", args.temp, "Temperature [0.0-1.0]. Default is 0.9.")
+	flag.BoolVar(&args.verbose, "v", args.verbose, "Verbose. Default off.")
+	flag.BoolVar(&args.lines, "l", args.lines, "Show line numbers. Default off.")
+	flag.BoolVar(&args.help, "h", args.help, "Show usage.")
+	flag.StringVar(&args.cmd, "c", args.cmd, "Command/Programme to use. Example: grep, ffmpeg, gcloud, curl. Default is empty.")
+	flag.IntVar(&args.year, "y", args.year, "Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.")
+	flag.BoolVar(&args.version, "version", false, "Show version of this build.")
 
 	flag.Parse()
 
-	if osArg != nil {
-		args.os = *osArg
-	}
-	if numArg != nil {
-		args.num = *numArg
-	}
-	if tempArg != nil {
-		args.temp = float32(*tempArg)
-	}
-	if verboseArg != nil {
-		args.verbose = *verboseArg
-	}
-	if linesArg != nil {
-		args.lines = *linesArg
-	}
-	if helpArg != nil {
-		args.help = *helpArg
-	}
-	if cmdArg != nil {
-		args.cmd = *cmdArg
-	}
-	if yearArg != nil {
-		args.year = *yearArg
-	}
+	/*
+		// these cannot be null since we are giving defaults, right? Check later
+		if osArg != nil {
+			args.os = *osArg
+		}
+		if numArg != nil {
+			args.num = *numArg
+		}
+		if tempArg != nil {
+			args.temp = float32(*tempArg)
+		}
+		if verboseArg != nil {
+			args.verbose = *verboseArg
+		}
+		if linesArg != nil {
+			args.lines = *linesArg
+		}
+		if helpArg != nil {
+			args.help = *helpArg
+		}
+		if cmdArg != nil {
+			args.cmd = *cmdArg
+		}
+		if yearArg != nil {
+			args.year = *yearArg
+		}
+		if versionArg != nil {
+			args.version = *versionArg
+		}
+	*/
 
 	if args.num < 1 {
 		args.num = 1
@@ -276,7 +299,19 @@ func cleanCmd(s string) string {
 
 func main() {
 	parseFlags()
-	if args.help || len(flag.Args()) == 0 {
+	if args.help {
+		//usage()
+		flag.Usage()
+		showExamples()
+		os.Exit(0)
+	}
+
+	if args.version {
+		fmt.Println("gencmd Version: ", Version)
+		os.Exit(0)
+	}
+
+	if len(flag.Args()) == 0 {
 		//usage()
 		flag.Usage()
 		showExamples()
