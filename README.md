@@ -1,16 +1,15 @@
 # gencmd
 Generate cmd line arguments from the terminal itself. 
 
-You're on your terminal and you're trying to recall the right command line arguments. What's your workflow then? Shift to your browser, run a search, click through multiple links, read through multiple pages, and then finally find the right command line arguments? That's distracting. With `gencmd` your workflow continues in the command line itself.
+You're on your terminal typing out a command and you're trying, unsuccessfully, to recall the right cmd line arguments. What's your workflow then? Shift to your browser, run a search, click through multiple links, read through multiple pages, and then finally find the right command line arguments? That's distracting. With `gencmd` your workflow continues in the command line itself.
 
 Uses Google's PaLM API. 
 
 ### Examples
 These are generated. So you might see different results.
 ```	
-gencmd -n 5 -t 0.9 -v convert the first 10 seconds of an mp4 video into a gif
+gencmd -n 5 -t 0.9 convert the first 10 seconds of an mp4 video into a gif
 
-Suggestions: 
 ffmpeg -ss 00:00:10 -i input.mp4 -vcodec gif -pix_fmt rgb24 -t 00:00:10 output.gif
 ffmpeg -ss 00:00:00 -i input.mp4 -t 00:00:10 -vf "scale=320:-1,fps=25,format=gif" output.gif
 ffmpeg -ss 00:00:10 -i input.mp4 -vf "fps=10,scale=320:-1" output.gif
@@ -20,8 +19,7 @@ ffmpeg -i input.mp4 -vf "trim=0:10" output.gif
 
 ```
 gencmd -c grep find txt files that contain the text hello
-	
-Suggestions:
+
 grep -r hello *.txt
 grep "hello" *.txt
 grep -r hello *.txt
@@ -31,10 +29,8 @@ grep -i hello *.txt
 ```
 gencmd -o windows -n 2 find files that has extension pdf
 
-Suggestions:
 dir /s *.pdf
 dir /s *.pdf
-	
 ```
 
 ```
@@ -93,15 +89,16 @@ You need to get this API key from [MakerSuite - Get API key](https://makersuite.
 ### Options
 ```
  -c Command/Programme to use. Example: grep, ffmpeg, gcloud, curl. Default is empty.
- -l	Show line numbers. Default off.
  -n Number of results to generate. Max 10. Default is 4. (default 4)
  -o Operating system. Example: unix, linux, windows (default "unix")
  -t Temperature [0.0-1.0]. Default is 0.9. (default 0.9)
+ -i Interactive mode. Copy command to clipboard. Default off.
  -y Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.
  
  -h	Show usage.
  -v	Verbose. Default off.
  -version Show version of this build.
+ -l	Show line numbers. Default off.
 ```
 
 ### Warning!
