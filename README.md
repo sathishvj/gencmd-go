@@ -49,15 +49,24 @@ As of now, access is limited by Google. So you might have to put yourself on the
 ### Installation
 If you know Go, you can download the source code or install it from `github.com/sathishvj/gencmd-go`.
 
+Linux Users: Please install xsel, xclip, wl-clipboard or Termux:API add-on for termux-clipboard-get/set. This is required for the interactive mode to work to copy to clipboard. You can skip this if you don't want to use the interactive mode.
+E.g. `sudo apt-get install xsel`
+
 Alternatively, here are the steps for unix based systems (Mac, Linux). The steps for Windows should be similar, but I haven't tested it.
 
-#### 1. Download the binary for you OS and architecture from the releases directory: 
+#### 1. Download the binary for your OS and architecture from the releases directory: 
 
-For example, if you are on Mac with Apple Silicon, then you can do:
+Example for Apple Silicon
 ```
 wget https://github.com/sathishvj/gencmd-go/raw/main/releases/darwin-arm64/gencmd 
 chmod +x gencmd 
 ./gencmd -h
+```
+
+If you don't have wget, then maybe curl will work for you. Example for Windows:
+```
+curl -o gencmd -L https://github.com/sathishvj/gencmd-go/raw/main/releases/windows-amd64/gencmd.exe
+gencmd -h
 ```
 
 Available builds right now are:
@@ -68,10 +77,15 @@ Available builds right now are:
  - windows-amd64/gencmd.exe
  - windows-arm644/gencmd.exe
 
-
 #### 2. Export the API key.
+For unix systems:
 ```
 export GENCMD_API_KEY=<your api key>
+```
+
+For windows, I think it is:
+```
+set GENCMD_API_KEY=<your api key>
 ```
 You need to get this API key from [MakerSuite - Get API key](https://makersuite.google.com/app/apikey), if you have access.
 
@@ -80,11 +94,9 @@ You need to get this API key from [MakerSuite - Get API key](https://makersuite.
 ./gencmd -o unix -c grep find txt files that contain the text hello
 ```
 
-You need to get this API key from [MakerSuite - Get API key](https://makersuite.google.com/app/apikey), if you have access.
-
 #### 4. More Permanent Options
- - You can add the binary to your path.
- - You can add the export command for the API key to your .bashrc or .zshrc or .profile file.
+ - You can add the binary to your PATH.
+ - You can add the export command for the API key to your .bashrc or .zshrc or .profile file. On windows, you can do it in the System Settings->Environment variables GUI.
 
 ### Options
 ```
@@ -105,5 +117,4 @@ You need to get this API key from [MakerSuite - Get API key](https://makersuite.
 Google's policies say they can use your data. So don't use this with sensitive data.
 
 ## License
-MIT License. 
-
+MIT License.
