@@ -6,9 +6,14 @@ You're on your terminal typing out a command and you're trying, unsuccessfully, 
 Uses Google's PaLM API. 
 
 ### Examples
-These are generated. So you might see different results.
+
+![](images/gencmd-demo.gif)
+
+These are generated. So you might see different results each time you run it..
 ```	
 gencmd -n 5 -t 0.9 convert the first 10 seconds of an mp4 video into a gif
+# -n is the number of results
+# -t is the temperature.
 
 ffmpeg -ss 00:00:10 -i input.mp4 -vcodec gif -pix_fmt rgb24 -t 00:00:10 output.gif
 ffmpeg -ss 00:00:00 -i input.mp4 -t 00:00:10 -vf "scale=320:-1,fps=25,format=gif" output.gif
@@ -18,27 +23,31 @@ ffmpeg -i input.mp4 -vf "trim=0:10" output.gif
 ```
 
 ```
-gencmd -c grep find txt files that contain the text hello
+gencmd -i -c grep find txt files that contain the text hello
+# -c specifies the command to use. In this case, grep.
+# -i enables interactive mode. This copies the command to clipboard.
 
 grep -r hello *.txt
 grep "hello" *.txt
-grep -r hello *.txt
+grep -r "hello" *.txt
 grep -i hello *.txt
+
+Number to copy to clipboard. q to quit. Enter your choice: 3
+Copied suggestion 3 to clipboard.
+$ grep -r "hello" *.txt
 ```
 
 ```
-gencmd -o windows -n 2 find files that has extension pdf
+gencmd -o windows -n 1 find files that has extension pdf
+# -o specifies the operating system. In this case, windows.
 
-dir /s *.pdf
 dir /s *.pdf
 ```
 
 ```
 gencmd -c git -n 2 recursively remove a directory from git but not from local
-
-Suggestions:
-git rm -r --cached <directory>
-git rm --cached -r <directory>
+gencmd -c gcloud delete a vm named instance-1 in iowa region zone a
+gencmd -c kubectl delete a pod named hello in namespace n2
 ```
 
 ### Requires PaLM API key
