@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -58,6 +59,7 @@ type Args struct {
 	year    int
 	warning bool
 	version bool
+	run     bool
 }
 
 var args = Args{
@@ -71,6 +73,7 @@ var args = Args{
 	year:    0,
 	version: false,
 	warning: false,
+	run:     false,
 }
 
 func showExamples() {
@@ -86,7 +89,12 @@ Written by Sathish VJ`)
 }
 
 func parseFlags() {
-	flag.StringVar(&args.os, "o", args.os, "Operating system. Example: unix, linux, windows")
+	args.os = runtime.GOOS
+	if args.os == "darwin" {
+		args.os = "unix"
+	}
+
+	flag.StringVar(&args.os, "o", args.os, "Operating system. Example: unix, linux, windows. Defaults to your OS.")
 	flag.IntVar(&args.num, "n", args.num, "Number of results to generate. Max 10. Default is 4.")
 	flag.Float64Var(&args.temp, "t", args.temp, "Temperature [0.0-1.0]. Default is 0.9.")
 	flag.BoolVar(&args.verbose, "v", args.verbose, "Verbose. Default off.")
@@ -96,6 +104,7 @@ func parseFlags() {
 	flag.IntVar(&args.year, "y", args.year, "Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.")
 	flag.BoolVar(&args.version, "version", false, "Show version of this build.")
 	flag.BoolVar(&args.warning, "warning", false, "Suppress warning. Default off.")
+	flag.BoolVar(&args.warning, "run", false, "Run the cmd from within the program. Default off.")
 
 	flag.Parse()
 
@@ -114,6 +123,9 @@ func parseFlags() {
 	if args.temp > 1.0 {
 		args.temp = 1.0
 		fmt.Println("Temperature cannot be more than 1.0. Setting it to 1.0.")
+	}
+	if args.run {
+		args.lines = true
 	}
 
 }
@@ -290,12 +302,21 @@ func main() {
 		fmt.Println("\nWarning! These suggestions are generated. They might not be accurate. If you are performing any file/folder/data destructive tasks, please back up your original data before trying it out.\n")
 	}
 	fmt.Println("Suggestions:")
+
+	suggestions := []string{}
 	for i, candidate := range resp.Candidates {
 		s := cleanCmd(candidate.Output)
 		if args.lines {
-			fmt.Printf("%d: %s\n", i+1, s)
+			//fmt.Printf("%d: %s\n", i+1, s)
+			suggestions = append(suggestions, fmt.Sprintf("%d: %s", i+1, s))
 		} else {
-			fmt.Printf("%s\n", s)
+			//fmt.Printf("%s\n", s)
+			suggestions = append(suggestions, s)
 		}
 	}
+
+	for i, s := range suggestions {
+		fmt.Println(fmt.Sprintf("%2d: %s", i+1, s))
+	}
+
 }
