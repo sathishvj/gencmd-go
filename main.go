@@ -16,6 +16,8 @@ import (
 
 var Version string = "to be set in ld flags"
 
+const MaxCandidates int = 8
+
 type Request struct {
 	Prompt          PromptType `json:"prompt"`
 	Temperature     float64    `json:"temperature"`
@@ -65,7 +67,7 @@ type Args struct {
 var args = Args{
 	os:          "unix",
 	num:         4,
-	temp:        0.9,
+	temp:        0.8,
 	verbose:     false,
 	lines:       false,
 	help:        false,
@@ -83,7 +85,7 @@ Examples:
 	gencmd -n 5 -t 0.9 convert the first 10 seconds of an mp4 video into a gif
 	gencmd -c grep find files that contain the text html
 	gencmd -o windows find files that has extension pdf
-	gencmd -c git recursively remove a directory from git but not from local
+	gencmd -i -c git recursively remove a directory from git but not from local
 
 Written by Sathish VJ`)
 }
@@ -95,7 +97,7 @@ func parseFlags() {
 	}
 
 	flag.StringVar(&args.os, "o", args.os, "Operating system. Example: unix, linux, windows. Defaults to your OS.")
-	flag.IntVar(&args.num, "n", args.num, "Number of results to generate. Max 10. Default is 4.")
+	flag.IntVar(&args.num, "n", args.num, "Max number of results to show. [1-8]. Default is 4. Suggestions are deduped; so you might get less than the number specified.")
 	flag.Float64Var(&args.temp, "t", args.temp, "Temperature [0.0-1.0]. Default is 0.9.")
 	flag.BoolVar(&args.verbose, "v", args.verbose, "Verbose. Default off.")
 	flag.BoolVar(&args.lines, "l", args.lines, "Show line numbers. Default off.")
@@ -112,8 +114,8 @@ func parseFlags() {
 		args.num = 1
 		fmt.Println("Number of suggestions cannot be less than 1. Setting it to 1.")
 	}
-	if args.num > 10 {
-		args.num = 10
+	if args.num > MaxCandidates {
+		args.num = MaxCandidates
 		fmt.Println("Number of suggestions cannot be more than 10. Setting it to 10.")
 	}
 	if args.temp < 0.0 {
@@ -175,7 +177,7 @@ func makeRequestString(args Args, userPrompt string) Request {
 		Temperature:     args.temp,
 		TopK:            40,
 		TopP:            0.95,
-		CandidateCount:  args.num,
+		CandidateCount:  MaxCandidates,
 		MaxOutputTokens: 1024,
 		//StopSequences: [],
 		Prompt: PromptType{Text: prompt_context},
@@ -272,6 +274,17 @@ func cleanCmd(s string) string {
 
 	return s
 }
+func dedup(input []string) []string {
+	keys := make(map[string]bool)
+	var list []string
+	for _, entry := range input {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
+}
 
 func main() {
 	parseFlags()
@@ -313,6 +326,12 @@ func main() {
 		s := cleanCmd(candidate.Output)
 		suggestions = append(suggestions, s)
 	}
+	suggestions = dedup(suggestions)
+
+	if len(suggestions) < args.num {
+		args.num = len(suggestions)
+	}
+	suggestions = suggestions[:args.num]
 
 	for i, s := range suggestions {
 		if args.lines {
