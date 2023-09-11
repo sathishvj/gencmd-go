@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"golang.design/x/clipboard"
+	"github.com/atotto/clipboard"
+	//"golang.design/x/clipboard"
 	"io"
 	"net/http"
 	"os"
@@ -388,9 +389,14 @@ choices:
 		goto choices
 	}
 
-	//fmt.Println("Copying to clipboard: ", suggestions[i-1])
-	clipboard.Write(clipboard.FmtText, []byte(suggestions[opt-1]))
+	err = copyToClipboard(suggestions[opt-1])
+	if err != nil {
+		fmt.Printf("Error copying to clipboard: %s\n", err.Error())
+		os.Exit(1)
+	}
 	fmt.Printf("Copied suggestion %d to clipboard.\n", opt)
 	os.Exit(0)
-
+}
+func copyToClipboard(s string) error {
+	return clipboard.WriteAll(s)
 }
