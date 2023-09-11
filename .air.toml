@@ -5,7 +5,7 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   #bin = "./tmp/main"
-  bin = "./tmp/main -c ffmpeg convert first 10 seconds of mp4 to gif"
+  bin = "./tmp/main -i -c ffmpeg convert first 10 seconds of mp4 to gif"
   cmd = "go build -o ./tmp/main ."
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "releases"]

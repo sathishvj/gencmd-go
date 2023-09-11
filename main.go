@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"golang.design/x/clipboard"
 	"io"
 	"log"
 	"net/http"
@@ -49,31 +50,31 @@ type Candidate struct {
 }
 
 type Args struct {
-	os      string
-	num     int
-	temp    float64
-	verbose bool
-	lines   bool
-	help    bool
-	cmd     string
-	year    int
-	warning bool
-	version bool
-	run     bool
+	os          string
+	num         int
+	temp        float64
+	verbose     bool
+	lines       bool
+	help        bool
+	cmd         string
+	year        int
+	warning     bool
+	version     bool
+	interactive bool
 }
 
 var args = Args{
-	os:      "unix",
-	num:     4,
-	temp:    0.9,
-	verbose: false,
-	lines:   false,
-	help:    false,
-	cmd:     "",
-	year:    0,
-	version: false,
-	warning: false,
-	run:     false,
+	os:          "unix",
+	num:         4,
+	temp:        0.9,
+	verbose:     false,
+	lines:       false,
+	help:        false,
+	cmd:         "",
+	year:        0,
+	version:     false,
+	warning:     false,
+	interactive: false,
 }
 
 func showExamples() {
@@ -104,7 +105,7 @@ func parseFlags() {
 	flag.IntVar(&args.year, "y", args.year, "Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.")
 	flag.BoolVar(&args.version, "version", false, "Show version of this build.")
 	flag.BoolVar(&args.warning, "warning", false, "Suppress warning. Default off.")
-	flag.BoolVar(&args.warning, "run", false, "Run the cmd from within the program. Default off.")
+	flag.BoolVar(&args.interactive, "i", false, "Copy command interactively. Default off.")
 
 	flag.Parse()
 
@@ -124,7 +125,7 @@ func parseFlags() {
 		args.temp = 1.0
 		fmt.Println("Temperature cannot be more than 1.0. Setting it to 1.0.")
 	}
-	if args.run {
+	if args.interactive {
 		args.lines = true
 	}
 
@@ -299,24 +300,71 @@ func main() {
 	verbose(fmt.Sprintf("%v", resp))
 
 	if !args.warning {
-		fmt.Println("\nWarning! These suggestions are generated. They might not be accurate. If you are performing any file/folder/data destructive tasks, please back up your original data before trying it out.\n")
+		fmt.Println("Warning! These suggestions are generated. They might not be accurate. If you are performing any file/folder/data destructive tasks, please back up your original data before trying it out.\n")
 	}
 	fmt.Println("Suggestions:")
 
 	suggestions := []string{}
-	for i, candidate := range resp.Candidates {
+	for _, candidate := range resp.Candidates {
 		s := cleanCmd(candidate.Output)
-		if args.lines {
-			//fmt.Printf("%d: %s\n", i+1, s)
-			suggestions = append(suggestions, fmt.Sprintf("%d: %s", i+1, s))
-		} else {
-			//fmt.Printf("%s\n", s)
-			suggestions = append(suggestions, s)
-		}
+		suggestions = append(suggestions, s)
 	}
 
 	for i, s := range suggestions {
-		fmt.Println(fmt.Sprintf("%2d: %s", i+1, s))
+		if args.lines {
+			fmt.Println(fmt.Sprintf("%2d: %s", i+1, s))
+		} else {
+			fmt.Println(fmt.Sprintf("%s", s))
+		}
 	}
+
+	if !args.interactive {
+		os.Exit(0)
+	}
+
+	interactiveRun(suggestions)
+}
+
+func split(s string) []string {
+	quoted := false
+	a := strings.FieldsFunc(s, func(r rune) bool {
+		if r == '"' || r == '\'' {
+			quoted = !quoted
+		}
+		return !quoted && r == ' '
+	})
+	return a
+
+}
+
+func interactiveRun(suggestions []string) {
+choices:
+	fmt.Print("\nNumber to copy to clipboard. q to quit. Enter your choice: ")
+	var input string
+	_, err := fmt.Scanln(&input)
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return
+	}
+	input = strings.TrimSpace(input)
+
+	if input == "q" {
+		os.Exit(0)
+	}
+
+	opt, err := strconv.Atoi(input)
+	if err != nil {
+		fmt.Println("Invalid choice. Neither q nor a number: %v", input)
+		goto choices
+	}
+	if opt < 1 || opt > len(suggestions) {
+		fmt.Println("Invalid number choice. Must be within 1 and %d\n", len(suggestions))
+		goto choices
+	}
+
+	//fmt.Println("Copying to clipboard: ", suggestions[i-1])
+	clipboard.Write(clipboard.FmtText, []byte(suggestions[opt-1]))
+	fmt.Printf("Copied suggestion %d to clipboard.\n", opt)
+	os.Exit(0)
 
 }
