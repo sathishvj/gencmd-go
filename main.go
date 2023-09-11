@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"golang.design/x/clipboard"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"runtime"
@@ -155,7 +154,7 @@ var (
 	cmd_prompt  = `Generate commands only for the ${CMD} command.`
 )
 
-func makeRequestString(key string, args Args, user_prompt string) Request {
+func makeRequestString(args Args, userPrompt string) Request {
 	prompt_context = strings.ReplaceAll(prompt_context, "${OS}", args.os)
 	if args.cmd != "" {
 		cmd_prompt = strings.ReplaceAll(cmd_prompt, "${CMD}", args.cmd)
@@ -169,7 +168,7 @@ func makeRequestString(key string, args Args, user_prompt string) Request {
 	} else {
 		prompt_context = strings.ReplaceAll(prompt_context, "${YEAR}", "")
 	}
-	prompt_context += user_prompt
+	prompt_context += userPrompt
 	//fmt.Println("Full prompt context: ", prompt_context)
 
 	r := Request{
@@ -213,12 +212,13 @@ func makeRequestString(key string, args Args, user_prompt string) Request {
 func makeHTTPRequest(url string, reqData Request) Response {
 	data, err := json.Marshal(reqData)
 	if err != nil {
-		log.Fatalf("Error occurred while converting request data to JSON: %s", err.Error())
+		fmt.Printf("Error occurred while converting request data to JSON: %s\n", err.Error())
 		os.Exit(1)
 	}
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
-		log.Fatalf("Error occurred while creating HTTP request: %s", err.Error())
+		fmt.Printf("Error occurred while creating HTTP request: %s\n", err.Error())
+		os.Exit(1)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -226,20 +226,23 @@ func makeHTTPRequest(url string, reqData Request) Response {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalf("Error occurred while making HTTP request: %s", err.Error())
+		fmt.Printf("Error occurred while making HTTP request: %s\n", err.Error())
+		os.Exit(1)
 	}
 	defer resp.Body.Close()
 
 	//log.Printf("Response status code: %d\n", resp.StatusCode)
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error occurred while making HTTP request: %s", err.Error())
+		fmt.Printf("Error occurred while making HTTP request: %s\n", err.Error())
+		os.Exit(1)
 	}
 
 	var respData Response
 	err = json.Unmarshal(body, &respData)
 	if err != nil {
-		log.Fatalf("Error occurred while unmarshalling response: %s", err.Error())
+		fmt.Printf("Error occurred while unmarshalling response: %s\n", err.Error())
+		os.Exit(1)
 	}
 
 	return respData
@@ -293,7 +296,8 @@ func main() {
 
 	// check if API_KEY is set in the environment variables. Exit if not set.
 	key := checkAndGetAPIKey()
-	reqData := makeRequestString(key, args, strings.Join(flag.Args(), " "))
+
+	reqData := makeRequestString(args, strings.Join(flag.Args(), " "))
 	url := "https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText?key=" + key
 
 	resp := makeHTTPRequest(url, reqData)
@@ -302,7 +306,7 @@ func main() {
 	if !args.warning {
 		fmt.Println("Warning! These suggestions are generated. They might not be accurate. If you are performing any file/folder/data destructive tasks, please back up your original data before trying it out.\n")
 	}
-	fmt.Println("Suggestions:")
+	//fmt.Println("Suggestions:")
 
 	suggestions := []string{}
 	for _, candidate := range resp.Candidates {
@@ -325,6 +329,9 @@ func main() {
 	interactiveRun(suggestions)
 }
 
+/*
+// ref: https://stackoverflow.com/questions/47489745/splitting-a-string-at-space-except-inside-quotation-marks
+// Splitting a string at Space, except inside quotation marks
 func split(s string) []string {
 	quoted := false
 	a := strings.FieldsFunc(s, func(r rune) bool {
@@ -334,8 +341,8 @@ func split(s string) []string {
 		return !quoted && r == ' '
 	})
 	return a
-
 }
+*/
 
 func interactiveRun(suggestions []string) {
 choices:
@@ -354,11 +361,11 @@ choices:
 
 	opt, err := strconv.Atoi(input)
 	if err != nil {
-		fmt.Println("Invalid choice. Neither q nor a number: %v", input)
+		fmt.Printf("Invalid choice. Neither q nor a number: %d\n", input)
 		goto choices
 	}
 	if opt < 1 || opt > len(suggestions) {
-		fmt.Println("Invalid number choice. Must be within 1 and %d\n", len(suggestions))
+		fmt.Printf("Invalid number choice. Must be within 1 and %d\n", len(suggestions))
 		goto choices
 	}
 
