@@ -56,6 +56,7 @@ type Args struct {
 	help    bool
 	cmd     string
 	year    int
+	warning bool
 	version bool
 }
 
@@ -69,6 +70,7 @@ var args = Args{
 	cmd:     "",
 	year:    0,
 	version: false,
+	warning: false,
 }
 
 func showExamples() {
@@ -93,6 +95,7 @@ func parseFlags() {
 	flag.StringVar(&args.cmd, "c", args.cmd, "Command/Programme to use. Example: grep, ffmpeg, gcloud, curl. Default is empty.")
 	flag.IntVar(&args.year, "y", args.year, "Year (included) post which the cmd is likely to have been used. This attempts to avoid older versions and options. Example: 2021, 2020, 2019. Default is none.")
 	flag.BoolVar(&args.version, "version", false, "Show version of this build.")
+	flag.BoolVar(&args.warning, "warning", false, "Suppress warning. Default off.")
 
 	flag.Parse()
 
@@ -235,6 +238,7 @@ func verbose(s string) {
 	}
 }
 
+// I occasionally see random characters at the beginning and end of the commands. This function cleans them up.
 func cleanCmd(s string) string {
 	s = strings.TrimSpace(s)
 	if strings.HasPrefix(s, "```\n") {
@@ -243,12 +247,13 @@ func cleanCmd(s string) string {
 	if strings.HasSuffix(s, "\n```") {
 		s = strings.TrimSuffix(s, "\n```")
 	}
-	if strings.HasPrefix(s, "```") {
-		s = strings.TrimPrefix(s, "```")
+
+	artifacts := []string{"```", "**"}
+	for _, artifact := range artifacts {
+		s = strings.TrimLeft(s, artifact)
+		s = strings.TrimRight(s, artifact)
 	}
-	if strings.HasSuffix(s, "```") {
-		s = strings.TrimSuffix(s, "```")
-	}
+
 	return s
 }
 
@@ -281,7 +286,9 @@ func main() {
 	resp := makeHTTPRequest(url, reqData)
 	verbose(fmt.Sprintf("%v", resp))
 
-	fmt.Println("\nThese suggestions are generated. They might not be accurate. If you are performing any file/folder/data destructive tasks, please back up your original data before trying it out.\n")
+	if !args.warning {
+		fmt.Println("\nWarning! These suggestions are generated. They might not be accurate. If you are performing any file/folder/data destructive tasks, please back up your original data before trying it out.\n")
+	}
 	fmt.Println("Suggestions:")
 	for i, candidate := range resp.Candidates {
 		s := cleanCmd(candidate.Output)
