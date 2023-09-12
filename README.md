@@ -56,12 +56,10 @@ If you have access to MakerSuite, you can get it from there: [MakerSuite - Get A
 As of now, access is limited by Google. So you might have to put yourself on the waitlist.
 
 ### Installation
-If you know Go, you can download the source code or install it from `github.com/sathishvj/gencmd-go`.
-
 Linux Users: Please install xsel, xclip, wl-clipboard or Termux:API add-on for termux-clipboard-get/set. This is required for the interactive mode to work to copy to clipboard. You can skip this if you don't want to use the interactive mode.
 E.g. `sudo apt-get install xsel`
 
-Alternatively, here are the steps for unix based systems (Mac, Linux). The steps for Windows should be similar, but I haven't tested it.
+Here are the steps for unix based systems (Mac, Linux). The steps for Windows should be similar.
 
 #### 1. Download the binary for your OS and architecture from the releases directory: 
 
