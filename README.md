@@ -27,14 +27,15 @@ gencmd -i -c grep find txt files that contain the text hello
 # -c specifies the command to use. In this case, grep.
 # -i enables interactive mode. This copies the command to clipboard.
 
-grep -r hello *.txt
-grep "hello" *.txt
-grep -r "hello" *.txt
-grep -i hello *.txt
+1: grep -r hello *.txt
+2: grep "hello" *.txt
+3: grep -r "hello" *.txt
+4: grep -i hello *.txt
 
 Number to copy to clipboard. q to quit. Enter your choice: 3
 Copied suggestion 3 to clipboard.
-$ grep -r "hello" *.txt
+
+$ [cmd/ctrl+v] grep -r "hello" *.txt
 ```
 
 ```
