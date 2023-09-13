@@ -151,7 +151,7 @@ Please set the API key in the environment variables.`)
 }
 
 var (
-	prompt_context = `Given a task, you should generate very good at generating accurate, popular, precise, error free, effective ${OS} command line commands and options. ${CMD} ${YEAR} The task is:
+	prompt_context = `Given a task, you should generate accurate, popular, precise, error free, effective ${OS} command line commands and options. ${CMD} ${YEAR} The task is:
 `
 	year_prompt = `The commands should be generated for any year from ${YEAR} to now.`
 	cmd_prompt  = `Generate commands only for the ${CMD} command.`
