@@ -117,7 +117,7 @@ func parseFlags() {
 	}
 	if args.num > MaxCandidates {
 		args.num = MaxCandidates
-		fmt.Println("Number of suggestions cannot be more than 10. Setting it to 10.")
+		fmt.Println(fmt.Sprintf("Number of suggestions cannot be more than %d. Setting it to %d.", MaxCandidates, MaxCandidates))
 	}
 	if args.temp < 0.0 {
 		args.temp = 0.0
