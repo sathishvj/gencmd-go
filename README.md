@@ -1,3 +1,8 @@
+# gencmd.com
+I built an expanded version of gencmd that supports multiple models and even enterprise features.
+Check it out here: [gencmd.com/r](https://gencmd.com/r)
+
+
 # gencmd
 Generate cmd line arguments from the terminal itself. 
 
